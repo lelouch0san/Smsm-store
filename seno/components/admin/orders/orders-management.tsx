@@ -9,7 +9,18 @@ import { addOrderNote, canTransition, fulfillmentLabels, getOrderById, getOrderC
 
 const statusTone: Record<OrderStatus, string> = { pending_review: 'border-[#f5c542]/25 bg-[#f5c542]/10 text-[#f5c542]', processing: 'border-sky-400/25 bg-sky-400/10 text-sky-300', completed: 'border-[#45e0b2]/25 bg-[#45e0b2]/10 text-[#45e0b2]', rejected: 'border-[#e50914]/25 bg-[#e50914]/10 text-[#ff6b72]', failed: 'border-[#e50914]/25 bg-[#e50914]/10 text-[#ff6b72]', cancelled: 'border-white/10 bg-white/5 text-white/45', refunded: 'border-violet-400/25 bg-violet-400/10 text-violet-300' }
 function StatusBadge({ status }: { status: OrderStatus }) { return <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-bold ${statusTone[status]}`}>{orderStatusLabels[status]}</span> }
-function formatDate(value: string) { return new Intl.DateTimeFormat('ar-SA', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }).format(new Date(value)) }
+function formatDate(value: string) {
+  const date = new Date(value)
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const year = date.getUTCFullYear()
+  const hour24 = date.getUTCHours()
+  const minute = String(date.getUTCMinutes()).padStart(2, '0')
+  const period = hour24 >= 12 ? 'م' : 'ص'
+  const hour12 = hour24 % 12 || 12
+  const toArabicDigits = (text: string | number) => String(text).replace(/\d/g, digit => '٠١٢٣٤٥٦٧٨٩'[Number(digit)])
+  return `${toArabicDigits(day)}‏/${toArabicDigits(month)}‏/${toArabicDigits(year)}، ${toArabicDigits(hour12)}:${toArabicDigits(minute)} ${period}`
+}
 function ActionButton({ label, onClick, tone = 'gold', icon: Icon = Check }: { label: string; onClick: () => void; tone?: 'gold' | 'red' | 'muted'; icon?: typeof Check }) { return <button type="button" onClick={onClick} className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-bold transition ${tone === 'gold' ? 'bg-[#f5c542] text-[#090909] hover:bg-[#ffd55d]' : tone === 'red' ? 'bg-[#e50914]/15 text-[#ff7b81] hover:bg-[#e50914]/25' : 'border border-white/10 text-white/60 hover:bg-white/5'}`}><Icon className="size-3.5" />{label}</button> }
 
 export function OrdersManagement({ initialStatus, title = 'جميع الطلبات', description = 'مركز موحد لمراجعة الطلبات وإدارة التنفيذ اليدوي والتلقائي.', detailId }: { initialStatus?: OrderStatus; title?: string; description?: string; detailId?: string }) {
