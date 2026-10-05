@@ -8,9 +8,10 @@ export type LedgerStatus = 'posted' | 'pending'
 export type Wallet = { id: string; customerId: string; customerName: string; email: string; phone: string; balance: number; totalDeposits: number; totalSpending: number; totalRefunds: number; totalAdjustments: number; status: WalletStatus; lastTransactionAt: string }
 export type WalletTransaction = { id: string; customerId: string; customerName: string; amount: number; direction: Direction; type: TransactionType; previousBalance: number; newBalance: number; reason: string; actor: string; createdAt: string; status: LedgerStatus; orderId?: string; depositId?: string; codeId?: string }
 export type DepositRequest = { id: string; customerId: string; customerName: string; amount: number; paymentMethod: string; reference: string; proof?: string; note?: string; status: DepositStatus; createdAt: string; reviewedAt?: string; reviewedBy?: string; rejectionReason?: string }
-export type SenoCode = { id: string; value: string; denomination: number; batchId: string; batchName: string; status: SenoCodeStatus; createdAt: string; expiresAt?: string; customerName?: string; redeemedAt?: string; blockedReason?: string }
+export type SenoCode = { id: string; value: string; denomination: number; batchId: string; batchName: string; status: SenoCodeStatus; createdAt: string; expiresAt?: string; customerId?: string; customerName?: string; soldAt?: string; redeemedAt?: string; blockedAt?: string; blockedReason?: string }
+export type SenoCodeRedemption = { id: string; codeId: string; customerId: string; customerName: string; denomination: number; transactionId: string; redeemedAt: string; status: 'posted'|'failed'|'reversed'; amount: number }
 export type SenoCodeBatch = { id: string; name: string; denomination: number; quantity: number; createdAt: string; expiresAt?: string }
-export type SenoCodeRedemption = { id: string; codeId: string; customerId: string; customerName: string; denomination: number; transactionId: string; redeemedAt: string; status: 'posted' }
+// Redemption records remain linked to the code, customer, and wallet ledger transaction.
 
 const MOCK_NOW = Date.UTC(2026, 9, 5, 10)
 const stamp = (days: number) => new Date(MOCK_NOW - days * 86400000).toISOString()
@@ -36,13 +37,22 @@ let deposits: DepositRequest[] = [
 ]
 let codes: SenoCode[] = [
   ...Array.from({length:6},(_,i)=>({id:`CODE-${String(i+1).padStart(3,'0')}`,value:`SENO-10A4-9F${i}2-7A91`,denomination:10,batchId:'BAT-001',batchName:'OCT-2026-001',status:(i<3?'available':i===3?'sold':'redeemed') as SenoCodeStatus,createdAt:stamp(10),customerName:i>=5?'سارة خالد':undefined,redeemedAt:i>=5?stamp(2):undefined})),
-  {id:'CODE-007',value:'SENO-25B2-11F0-2C33',denomination:25,batchId:'BAT-002',batchName:'OCT-2026-002',status:'blocked',createdAt:stamp(20),blockedReason:'طلب حظر إداري'},
+  {id:'CODE-007',value:'SENO-25B2-11F0-2C33',denomination:25,batchId:'BAT-002',batchName:'OCT-2026-002',status:'blocked',createdAt:stamp(20),blockedAt:stamp(4),blockedReason:'طلب حظر إداري'},
+  {id:'CODE-008',value:'SENO-10EX-PIRED-001',denomination:10,batchId:'BAT-003',batchName:'OCT-2026-01',status:'expired',createdAt:stamp(35),expiresAt:'2026-09-15T00:00:00.000Z'},
+  {id:'CODE-009',value:'SENO-25EX-PIRED-002',denomination:25,batchId:'BAT-004',batchName:'SEP-2026-03',status:'expired',createdAt:stamp(40),expiresAt:'2026-09-28T00:00:00.000Z'},
+  {id:'CODE-010',value:'SENO-50EX-PIRED-003',denomination:50,batchId:'BAT-005',batchName:'AUG-2026-02',status:'expired',createdAt:stamp(55),expiresAt:'2026-08-31T00:00:00.000Z'},
+  {id:'CODE-011',value:'SENO-10BL-OCKED-01',denomination:10,batchId:'BAT-006',batchName:'OCT-2026-02',status:'blocked',createdAt:stamp(12),blockedAt:stamp(4),blockedReason:'نشاط مشبوه'},
+  {id:'CODE-012',value:'SENO-100-BLOCKED-1',denomination:100,batchId:'BAT-007',batchName:'SEP-2026-01',status:'blocked',createdAt:stamp(18),blockedAt:stamp(10),blockedReason:'تم الإبلاغ عن الكود'}
 ]
 let batches: SenoCodeBatch[] = [
   {id:'BAT-001',name:'OCT-2026-001',denomination:10,quantity:6,createdAt:stamp(10)},
   {id:'BAT-002',name:'OCT-2026-002',denomination:25,quantity:1,createdAt:stamp(20)},
 ]
-let redemptions: SenoCodeRedemption[] = [{id:'RED-001',codeId:'CODE-006',customerId:'CUS-021',customerName:'سارة خالد',denomination:10,transactionId:'TXN-1003',redeemedAt:stamp(2),status:'posted'}]
+let redemptions: SenoCodeRedemption[] = [
+  {id:'RED-2026-00125',codeId:'CODE-006',customerId:'CUS-021',customerName:'سارة خالد',denomination:10,transactionId:'TXN-1003',redeemedAt:stamp(2),status:'posted',amount:10},
+  {id:'RED-2026-00126',codeId:'CODE-003',customerId:'CUS-012',customerName:'عمر سعيد',denomination:10,transactionId:'TXN-1005',redeemedAt:stamp(5),status:'posted',amount:10},
+  {id:'RED-2026-00127',codeId:'CODE-004',customerId:'CUS-067',customerName:'نور أحمد',denomination:10,transactionId:'TXN-1006',redeemedAt:stamp(8),status:'reversed',amount:10},
+]
 
 export const labels = { transaction:{deposit:'إيداع',order_payment:'دفع طلب',admin_credit:'إضافة إدارية',admin_debit:'خصم إداري',refund:'استرداد',code_redemption:'استرداد كود'}, deposit:{pending:'بانتظار المراجعة',approved:'مقبول',rejected:'مرفوض',cancelled:'ملغي'}, code:{available:'متاح',sold:'مباع',redeemed:'مستخدم',expired:'منتهي',blocked:'محظور'} }
 export const getWallets = () => wallets
