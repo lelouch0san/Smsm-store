@@ -9,6 +9,7 @@ export type CustomerInputField = {
   labelEn: string
   type: CustomerInputFieldType
   required: boolean
+  enabled: boolean
   placeholder: string
   description: string
   defaultValue: string
@@ -30,7 +31,7 @@ export const customerInputFieldTypeLabels: Record<CustomerInputFieldType, string
 export const customerInputSchemas: CustomerInputSchema[] = []
 
 export function createCustomerInputField(sortOrder: number): CustomerInputField {
-  return { id: `input-field-${Date.now()}-${sortOrder}`, fieldName: '', labelAr: '', labelEn: '', type: 'text', required: true, placeholder: '', description: '', defaultValue: '', sortOrder }
+  return { id: `input-field-${Date.now()}-${sortOrder}`, fieldName: '', labelAr: '', labelEn: '', type: 'text', required: true, enabled: true, placeholder: '', description: '', defaultValue: '', sortOrder }
 }
 
 export function normalizeCustomerInputSchema(schema?: CustomerInputSchema | null): CustomerInputSchema {
@@ -39,7 +40,8 @@ export function normalizeCustomerInputSchema(schema?: CustomerInputSchema | null
 
 export function validateCustomerInputField(field: CustomerInputField): string | null {
   if (!field.labelAr.trim() || !field.fieldName.trim()) return 'يرجى إدخال اسم الحقل بالعربية واسم الحقل البرمجي'
-  if (field.type === 'select' && (!field.options || field.options.length === 0)) return 'أضف خياراً واحداً على الأقل لقائمة الاختيار'
+  if (field.type === 'select' && (!field.options || field.options.length === 0 || field.options.some((option) => !option.labelAr.trim() || !option.value.trim()))) return 'أكمل خيارات قائمة الاختيار'
+  if (field.pattern) { try { new RegExp(field.pattern) } catch { return `صيغة التحقق للحقل ${field.labelAr} غير صحيحة` } }
   return null
 }
 
@@ -52,6 +54,9 @@ export function validateCustomerInputValues(schema: CustomerInputSchema, values:
     if (field.minLength && value.length < field.minLength) return [[field.fieldName, `الحد الأدنى لحقل ${field.labelAr} هو ${field.minLength}`]]
     if (field.maxLength && value.length > field.maxLength) return [[field.fieldName, `الحد الأقصى لحقل ${field.labelAr} هو ${field.maxLength}`]]
     if (field.type === 'number' && value && (Number.isNaN(Number(value)) || (field.min !== undefined && Number(value) < field.min) || (field.max !== undefined && Number(value) > field.max))) return [[field.fieldName, `قيمة ${field.labelAr} خارج النطاق المسموح`]]
+    if (field.type === 'phone' && value && !/^[+\\d][\\d\\s().-]{6,}$/.test(value)) return [[field.fieldName, `رقم الهاتف في ${field.labelAr} غير صحيح`]]
+    if (field.type === 'select' && value && !(field.options || []).some((option) => option.value === value)) return [[field.fieldName, `اختر قيمة صحيحة لحقل ${field.labelAr}`]]
+    if (field.pattern && value) { try { if (!new RegExp(field.pattern).test(value)) return [[field.fieldName, `قيمة ${field.labelAr} لا تطابق النمط المطلوب`]] } catch { return [[field.fieldName, `إعداد التحقق لحقل ${field.labelAr} غير صحيح`]] } }
     return []
   }))
 }
