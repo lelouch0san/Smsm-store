@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import {
-  Bell, Boxes, BriefcaseBusiness, CircleDollarSign, ClipboardList, Coins, CreditCard, FileBarChart,
+  Activity, Bell, Boxes, BriefcaseBusiness, CircleDollarSign, ClipboardList, Coins, CreditCard, FileBarChart,
   FileCog, Gauge, Gift, LayoutDashboard, Megaphone, Package, PanelsTopLeft, ScrollText, Settings2,
   ShieldCheck, ShoppingBag, Tags, Ticket, UserRound, Users, WalletCards, Banknote, BadgeDollarSign, RotateCcw,
 } from 'lucide-react'
@@ -38,8 +38,11 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'قواعد التنفيذ والحالات', href: '/admin/orders/rules', icon: FileCog },
   ] },
   { label: 'العملاء', items: [
-    { label: 'العملاء', href: '/admin/customers', icon: UserRound, disabled: true },
-    { label: 'شرائح العملاء', href: '/admin/customer-segments', icon: Users, disabled: true },
+    { label: 'العملاء', href: '/admin/customers', icon: UserRound },
+    { label: 'شرائح العملاء', href: '/admin/customer-segments', icon: Users },
+    { label: 'القيود والحظر', href: '/admin/customer-restrictions', icon: ShieldCheck },
+    { label: 'ملاحظات العملاء', href: '/admin/customer-notes', icon: ScrollText },
+    { label: 'نشاط العملاء', href: '/admin/customer-activity', icon: Activity },
   ] },
   { label: 'المحفظة والمالية', items: [
     { label: 'المحفظة', href: '/admin/wallet', icon: WalletCards, disabled: true },
