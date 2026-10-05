@@ -13,8 +13,9 @@ export type Order = {
   startedAt?: string; completedAt?: string; timeline: OrderTimelineEvent[]
 }
 
-const now = new Date()
-const iso = (days: number, hours = 0) => new Date(now.getTime() - (days * 86400000 + hours * 3600000)).toISOString()
+// Keep mock timestamps deterministic so server-rendered and client-rendered order views match.
+const mockNow = new Date('2026-10-05T00:00:00.000Z')
+const iso = (days: number, hours = 0) => new Date(mockNow.getTime() - (days * 86400000 + hours * 3600000)).toISOString()
 const event = (id: string, label: string, createdAt: string, detail?: string): OrderTimelineEvent => ({ id, label, createdAt, detail })
 
 let orders: Order[] = [
