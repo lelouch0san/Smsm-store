@@ -1,7 +1,6 @@
 export type CustomerInputFieldType = 'text' | 'number' | 'email' | 'url' | 'select' | 'phone' | 'textarea'
 
-export type CustomerInputOption = { labelAr: string; labelEn?: string; value: string }
-
+export type CustomerInputOption = { value: string; labelAr: string; labelEn?: string }
 export type CustomerInputField = {
   id: string
   fieldName: string
@@ -18,71 +17,77 @@ export type CustomerInputField = {
   min?: number
   max?: number
   pattern?: string
-  options: CustomerInputOption[]
+  options?: CustomerInputOption[]
 }
-
 export type CustomerInputSchema = { id: string; fields: CustomerInputField[] }
 
-export const customerInputFieldTypeLabels: Record<CustomerInputFieldType, string> = {
+export const customerInputFieldLabels: Record<CustomerInputFieldType, string> = {
   text: 'نص', number: 'رقم', email: 'بريد إلكتروني', url: 'رابط', select: 'قائمة اختيار', phone: 'هاتف', textarea: 'نص طويل',
 }
 
-export function createCustomerInputField(sortOrder = 1): CustomerInputField {
-  return { id: `input-field-${Date.now()}-${sortOrder}`, fieldName: '', labelAr: '', labelEn: '', type: 'text', required: true, placeholder: '', description: '', defaultValue: '', sortOrder, options: [] }
-}
-
 export function createCustomerInputSchema(fields: CustomerInputField[] = []): CustomerInputSchema {
-  return { id: `input-schema-${Date.now()}`, fields: fields.map((field, index) => ({ ...field, sortOrder: index + 1 })) }
+  return { id: `schema-${Date.now()}`, fields: fields.map((field, index) => ({ ...field, sortOrder: index + 1 })) }
 }
 
-export function normalizeCustomerInputSchema(schema?: CustomerInputSchema | null): CustomerInputSchema {
-  return schema ? { ...schema, fields: [...schema.fields].sort((a, b) => a.sortOrder - b.sortOrder) } : createCustomerInputSchema()
+export function createCustomerInputField(sortOrder: number): CustomerInputField {
+  return { id: `field-${Date.now()}-${sortOrder}`, fieldName: '', labelAr: '', labelEn: '', type: 'text', required: true, placeholder: '', description: '', defaultValue: '', sortOrder }
 }
 
-export const validateCustomerInputField = (field: CustomerInputField) => {
-  if (!field.labelAr.trim() || !field.fieldName.trim()) return 'يرجى إدخال اسم الحقل بالعربية واسم الحقل البرمجي'
-  if (field.type === 'select' && field.options.length === 0) return 'أضف خياراً واحداً على الأقل لقائمة الاختيار'
+export function validateCustomerInputField(field: CustomerInputField): string | null {
+  if (!field.labelAr.trim() || !field.fieldName.trim()) return 'يرجى إدخال اسم الحقل واسم العرض بالعربية'
+  if (field.type === 'select' && (!field.options || field.options.length === 0)) return 'أضف خياراً واحداً على الأقل لقائمة الاختيار'
   return null
 }
 
-export const validateCustomerInputSchema = (schema: CustomerInputSchema) => schema.fields.map(validateCustomerInputField).find(Boolean) || null
+export const emptyCustomerInputSchema: CustomerInputSchema = { id: '', fields: [] }
 
-export const emptyCustomerInputSchema = (): CustomerInputSchema => createCustomerInputSchema()
+export function getCustomerInputSchema(value: unknown): CustomerInputSchema {
+  if (!value || typeof value !== 'object') return emptyCustomerInputSchema
+  const schema = value as Partial<CustomerInputSchema>
+  return { id: schema.id || '', fields: Array.isArray(schema.fields) ? schema.fields : [] }
+}
 
-export const defaultCustomerInputSchema = emptyCustomerInputSchema()
+export function validateCustomerInputValues(schema: CustomerInputSchema, values: Record<string, string>) {
+  const errors: Record<string, string> = {}
+  schema.fields.forEach((field) => {
+    const value = values[field.fieldName] || ''
+    if (field.required && !value.trim()) errors[field.fieldName] = 'هذا الحقل مطلوب'
+    if (value && field.type === 'email' && !/^\S+@\S+\.\S+$/.test(value)) errors[field.fieldName] = 'أدخل بريداً إلكترونياً صحيحاً'
+    if (value && field.type === 'url') { try { new URL(value) } catch { errors[field.fieldName] = 'أدخل رابطاً صحيحاً' } }
+    if (value && field.minLength && value.length < field.minLength) errors[field.fieldName] = `الحد الأدنى ${field.minLength} أحرف`
+    if (value && field.maxLength && value.length > field.maxLength) errors[field.fieldName] = `الحد الأقصى ${field.maxLength} أحرف`
+  })
+  return errors
+}
 
-export const cloneCustomerInputSchema = (schema?: CustomerInputSchema | null): CustomerInputSchema => normalizeCustomerInputSchema(schema ? JSON.parse(JSON.stringify(schema)) : undefined)
+export const customerInputSchemas: CustomerInputSchema[] = []
+export function saveCustomerInputSchema(schema: CustomerInputSchema) {
+  const item = { ...schema, id: schema.id || `schema-${Date.now()}` }
+  const index = customerInputSchemas.findIndex((current) => current.id === item.id)
+  if (index >= 0) customerInputSchemas[index] = item
+  else customerInputSchemas.push(item)
+  return item
+}
+export function getCustomerInputSchemaById(id?: string) { return id ? customerInputSchemas.find((schema) => schema.id === id) : undefined }
+export function deleteCustomerInputSchemaField(schema: CustomerInputSchema, fieldId: string) { return { ...schema, fields: schema.fields.filter((field) => field.id !== fieldId).map((field, index) => ({ ...field, sortOrder: index + 1 })) } }
+export function reorderCustomerInputFields(schema: CustomerInputSchema, from: number, to: number) { const fields = [...schema.fields]; const [field] = fields.splice(from, 1); fields.splice(to, 0, field); return { ...schema, fields: fields.map((item, index) => ({ ...item, sortOrder: index + 1 })) } }
 
-export const customerInputFieldTypes = Object.keys(customerInputFieldTypeLabels) as CustomerInputFieldType[]
+export type { CustomerInputFieldType as CustomerInputType }
 
-export const customerInputSchemaSummary = (schema?: CustomerInputSchema | null) => `${schema?.fields.length || 0} حقل`
+export function fieldInputType(type: CustomerInputFieldType) { return type === 'number' ? 'number' : type === 'email' ? 'email' : type === 'url' ? 'url' : type === 'phone' ? 'tel' : 'text' }
 
-export const customerInputFieldValidationLabels = { minLength: 'الحد الأدنى للطول', maxLength: 'الحد الأقصى للطول', min: 'الحد الأدنى', max: 'الحد الأقصى', pattern: 'نمط التحقق' }
+export function getFieldValidationAttributes(field: CustomerInputField) { return { minLength: field.minLength, maxLength: field.maxLength, min: field.min, max: field.max, pattern: field.pattern } }
 
-export const customerInputSchemaVersion = 1
+export function normalizeCustomerInputSchema(schema: CustomerInputSchema) { return { ...schema, fields: [...schema.fields].sort((a, b) => a.sortOrder - b.sortOrder) } }
 
-export const isCustomerInputSchema = (value: unknown): value is CustomerInputSchema => Boolean(value && typeof value === 'object' && Array.isArray((value as CustomerInputSchema).fields))
+export function isCustomerInputSchemaValid(schema: CustomerInputSchema) { return schema.fields.every((field) => !validateCustomerInputField(field)) }
 
-export const customerInputSchemaFromFields = (fields: CustomerInputField[]) => createCustomerInputSchema(fields)
+export function getCustomerInputFieldTypeOptions() { return Object.entries(customerInputFieldLabels) as [CustomerInputFieldType, string][] }
 
-export const customerInputFieldTypeOptions = customerInputFieldTypes.map((value) => ({ value, label: customerInputFieldTypeLabels[value] }))
+export function cloneCustomerInputSchema(schema: CustomerInputSchema) { return { ...schema, id: '', fields: schema.fields.map((field) => ({ ...field, id: `field-${Date.now()}-${field.sortOrder}` })) } }
 
-export const schemaFieldSort = (fields: CustomerInputField[]) => fields.map((field, index) => ({ ...field, sortOrder: index + 1 }))
+export function schemaHasRequiredFields(schema: CustomerInputSchema) { return schema.fields.some((field) => field.required) }
 
-export const schemaFieldIds = (fields: CustomerInputField[]) => fields.map((field) => field.id)
+export function fieldSupportsOptions(type: CustomerInputFieldType) { return type === 'select' }
 
-export const schemaHasRequiredFields = (schema?: CustomerInputSchema | null) => Boolean(schema?.fields.some((field) => field.required))
-
-export const schemaUsesSelect = (schema?: CustomerInputSchema | null) => Boolean(schema?.fields.some((field) => field.type === 'select'))
-
-export const schemaIsEmpty = (schema?: CustomerInputSchema | null) => !schema?.fields.length
-
-export const customerInputFieldPlaceholder = (type: CustomerInputFieldType) => type === 'email' ? 'name@example.com' : type === 'url' ? 'https://example.com' : type === 'phone' ? '+20' : ''
-
-export const customerInputSchemaLabel = 'بيانات العميل'
-
-export const customerInputSchemaDescription = 'حدد البيانات التي يجب أن يدخلها العميل عند الشراء'
-
-export const customerInputSchemaInputName = 'customerInputSchema'
-
-export const customerInputSchemaFieldNameHint = 'يستخدم داخلياً للتحقق من الطلب'
+export function schemaSummary(schema: CustomerInputSchema) { return schema.fields.length ? `${schema.fields.length} حقول` : 'بدون حقول' }
