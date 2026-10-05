@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800;900&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  color-scheme: dark;
+  --background: #050506;
+  --foreground: #fafafa;
+  --card: #0e0f12;
+  --card-foreground: #fafafa;
+  --border: rgba(255,255,255,.12);
+  --radius: 1rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --radius-lg: var(--radius);
+}
+
+* { box-sizing: border-box; }
+html { background: #050506; }
+body { margin: 0; background: radial-gradient(circle at 50% -10%, rgba(55,12,15,.2), transparent 35%), #050506; color: var(--foreground); font-family: "Noto Kufi Arabic", Arial, Tahoma, sans-serif; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+@media (min-width: 640px) {
+  body { background: radial-gradient(circle at 50% 0%, rgba(90,12,18,.24), transparent 42%), #050506; }
+}
+
+@layer base { * { border-color: var(--border); } }
+
+@media (max-width: 639px) {
+  .max-w-5xl,
+  .max-w-6xl { padding-inline: 20px !important; }
+
+  main { padding-bottom: calc(7rem + env(safe-area-inset-bottom)) !important; }
+
+  body { overflow-x: hidden; }
+}
+
+@media (min-width: 1024px) {
+  nav.fixed { bottom: 1rem; border: 1px solid rgba(239,68,68,.8); border-radius: 2rem; }
+}
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #070708; }
+::-webkit-scrollbar-thumb { background: #48151b; border-radius: 999px; }
+
+@keyframes brand-breathe { 0%, 100% { opacity: .78; transform: scale(.97); } 50% { opacity: 1; transform: scale(1); } }
+@keyframes loading-line { 0% { transform: translateX(220%); } 100% { transform: translateX(-220%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}
