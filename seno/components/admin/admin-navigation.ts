@@ -19,10 +19,10 @@ export const adminNavigation: AdminNavGroup[] = [
   ] },
   { label: 'الخدمات', items: [
     { label: 'أنواع المنتجات', href: '/admin/product-types', icon: ShoppingBag },
-    { label: 'خدمات السوشيال', href: '/admin/social-services', icon: Users, disabled: true },
-    { label: 'الاشتراكات', href: '/admin/subscriptions', icon: Ticket, disabled: true },
-    { label: 'العملات الرقمية', href: '/admin/currencies', icon: Coins, disabled: true },
-    { label: 'خدمات السحب', href: '/admin/withdrawal-services', icon: Banknote, disabled: true },
+    { label: 'خدمات السوشيال', href: '/admin/social-services', icon: Users },
+    { label: 'الاشتراكات', href: '/admin/subscriptions', icon: Ticket },
+    { label: 'العملات الرقمية', href: '/admin/digital-currencies', icon: Coins },
+    { label: 'خدمات السحب', href: '/admin/withdrawal-services', icon: Banknote },
     { label: 'كتالوج الخدمات', href: '/admin/services', icon: BriefcaseBusiness },
   ] },
   { label: 'الطلبات', items: [
