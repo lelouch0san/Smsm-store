@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Bell, Boxes, BriefcaseBusiness, CircleDollarSign, ClipboardList, Coins, CreditCard, FileBarChart,
   FileCog, Gauge, Gift, LayoutDashboard, Megaphone, Package, PanelsTopLeft, ScrollText, Settings2,
-  ShieldCheck, ShoppingBag, Tags, Ticket, UserRound, Users, WalletCards, Banknote, BadgeDollarSign,
+  ShieldCheck, ShoppingBag, Tags, Ticket, UserRound, Users, WalletCards, Banknote, BadgeDollarSign, RotateCcw,
 } from 'lucide-react'
 
 export type AdminNavItem = { label: string; href: string; icon: LucideIcon; disabled?: boolean }
@@ -26,11 +26,16 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'كتالوج الخدمات', href: '/admin/services', icon: BriefcaseBusiness },
   ] },
   { label: 'الطلبات', items: [
-    { label: 'جميع الطلبات', href: '/admin/orders', icon: ClipboardList, disabled: true },
-    { label: 'قيد المراجعة', href: '/admin/orders/review', icon: ScrollText, disabled: true },
-    { label: 'قيد التنفيذ', href: '/admin/orders/processing', icon: Gauge, disabled: true },
-    { label: 'مكتملة', href: '/admin/orders/completed', icon: ShieldCheck, disabled: true },
-    { label: 'مرفوضة / فاشلة', href: '/admin/orders/failed', icon: FileCog, disabled: true },
+    { label: 'جميع الطلبات', href: '/admin/orders', icon: ClipboardList },
+    { label: 'قيد المراجعة', href: '/admin/orders/review', icon: ScrollText },
+    { label: 'قيد التنفيذ', href: '/admin/orders/processing', icon: Gauge },
+    { label: 'مكتملة', href: '/admin/orders/completed', icon: ShieldCheck },
+    { label: 'مرفوضة / فاشلة', href: '/admin/orders/failed', icon: FileCog },
+    { label: 'الملغاة', href: '/admin/orders/cancelled', icon: FileCog },
+    { label: 'المستردة', href: '/admin/orders/refunded', icon: RotateCcw },
+    { label: 'طابور التنفيذ', href: '/admin/orders/queue', icon: Gauge },
+    { label: 'مزودو التنفيذ', href: '/admin/orders/providers', icon: BriefcaseBusiness },
+    { label: 'قواعد التنفيذ والحالات', href: '/admin/orders/rules', icon: FileCog },
   ] },
   { label: 'العملاء', items: [
     { label: 'العملاء', href: '/admin/customers', icon: UserRound, disabled: true },
