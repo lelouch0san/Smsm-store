@@ -45,10 +45,10 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'نشاط العملاء', href: '/admin/customer-activity', icon: ActivityIcon },
   ] },
   { label: 'المحفظة والمالية', items: [
-    { label: 'المحفظة', href: '/admin/wallet', icon: WalletCards, disabled: true },
-    { label: 'طلبات الإيداع', href: '/admin/deposits', icon: CircleDollarSign, disabled: true },
-    { label: 'معاملات المحفظة', href: '/admin/wallet/transactions', icon: CreditCard, disabled: true },
-    { label: 'أكواد سينو', href: '/admin/seno-codes', icon: Gift, disabled: true },
+    { label: 'المحفظة', href: '/admin/wallet', icon: WalletCards },
+    { label: 'طلبات الإيداع', href: '/admin/deposits', icon: CircleDollarSign },
+    { label: 'معاملات المحفظة', href: '/admin/wallet/transactions', icon: CreditCard },
+    { label: 'أكواد سينو', href: '/admin/seno-codes', icon: Gift },
   ] },
   { label: 'المدفوعات', items: [
     { label: 'طرق الدفع', href: '/admin/payment-methods', icon: CreditCard, disabled: true },
