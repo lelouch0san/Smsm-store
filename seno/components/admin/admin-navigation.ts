@@ -51,9 +51,9 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'أكواد سينو', href: '/admin/seno-codes', icon: Gift },
   ] },
   { label: 'المدفوعات', items: [
-    { label: 'طرق الدفع', href: '/admin/payment-methods', icon: CreditCard, disabled: true },
-    { label: 'حسابات الدفع', href: '/admin/payment-accounts', icon: BadgeDollarSign, disabled: true },
-    { label: 'معاملات الدفع', href: '/admin/payment-transactions', icon: FileBarChart, disabled: true },
+    { label: 'طرق الدفع', href: '/admin/payment-methods', icon: CreditCard },
+    { label: 'حسابات الدفع', href: '/admin/payment-accounts', icon: BadgeDollarSign },
+    { label: 'معاملات الدفع', href: '/admin/payment-transactions', icon: FileBarChart },
   ] },
   { label: 'السحب', items: [
     { label: 'طلبات السحب', href: '/admin/withdrawals', icon: Banknote, disabled: true },
