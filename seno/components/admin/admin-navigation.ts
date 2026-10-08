@@ -56,9 +56,9 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'معاملات الدفع', href: '/admin/payment-transactions', icon: FileBarChart },
   ] },
   { label: 'السحب', items: [
-    { label: 'طلبات السحب', href: '/admin/withdrawals', icon: Banknote, disabled: true },
-    { label: 'طرق السحب', href: '/admin/withdrawal-methods', icon: WalletCards, disabled: true },
-    { label: 'معاملات السحب', href: '/admin/withdrawal-transactions', icon: FileBarChart, disabled: true },
+    { label: 'طلبات السحب', href: '/admin/withdrawal-requests', icon: Banknote },
+    { label: 'طرق السحب', href: '/admin/withdrawal-methods', icon: WalletCards },
+    { label: 'معاملات السحب', href: '/admin/withdrawal-transactions', icon: FileBarChart },
   ] },
   { label: 'التسويق', items: [
     { label: 'العروض', href: '/admin/offers', icon: Gift, disabled: true },
