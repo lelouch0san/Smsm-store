@@ -61,9 +61,9 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'معاملات السحب', href: '/admin/withdrawal-transactions', icon: FileBarChart },
   ] },
   { label: 'التسويق', items: [
-    { label: 'العروض', href: '/admin/offers', icon: Gift, disabled: true },
-    { label: 'كوبونات الخصم', href: '/admin/coupons', icon: Ticket, disabled: true },
-    { label: 'الحملات', href: '/admin/campaigns', icon: Megaphone, disabled: true },
+    { label: 'العروض', href: '/admin/offers', icon: Gift },
+    { label: 'كوبونات الخصم', href: '/admin/coupons', icon: Ticket },
+    { label: 'الحملات', href: '/admin/campaigns', icon: Megaphone },
   ] },
   { label: 'الإشعارات', items: [
     { label: 'مركز الإشعارات', href: '/admin/notifications', icon: Bell, disabled: true },
