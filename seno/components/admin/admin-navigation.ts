@@ -77,9 +77,9 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'الأرباح', href: '/admin/reports/profits', icon: CircleDollarSign },
   ] },
   { label: 'الإدارة', items: [
-    { label: 'المستخدمون الإداريون', href: '/admin/admin-users', icon: UserRound, disabled: true },
-    { label: 'الأدوار والصلاحيات', href: '/admin/roles', icon: ShieldCheck, disabled: true },
-    { label: 'سجل العمليات', href: '/admin/audit-logs', icon: ScrollText, disabled: true },
+    { label: 'المستخدمون الإداريون', href: '/admin/admin-users', icon: UserRound },
+    { label: 'الأدوار والصلاحيات', href: '/admin/roles-permissions', icon: ShieldCheck },
+    { label: 'سجل العمليات', href: '/admin/audit-logs', icon: ScrollText },
   ] },
   { label: 'الإعدادات', items: [
     { label: 'إعدادات المتجر', href: '/admin/settings/store', icon: Settings2, disabled: true },
