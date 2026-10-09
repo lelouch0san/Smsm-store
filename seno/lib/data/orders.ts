@@ -5,11 +5,12 @@ export type OrderTimelineEvent = { id: string; label: string; detail?: string; c
 export type CustomerInputValue = { key: string; label: string; value: string }
 export type Order = {
   id: string; customerId: string; customerName: string; customerEmail: string; customerPhone: string
+  publicOrderNumber?: string; source?: 'catalog' | 'game' | 'social_media' | 'digital_card' | 'subscription' | 'crypto' | 'seno_code'
   productId: string; productName: string; productType: string; category: string; packageId?: string; packageName?: string
-  quantity: number; originalPrice: number; discount: number; finalPrice: number; currency: string
+  quantity: number; originalPrice: number; unitPrice?: number; subtotal?: number; discount: number; finalPrice: number; currency: string
   paymentMethod: string; paymentStatus: PaymentStatus; transactionId: string; customerInputs: CustomerInputValue[]
-  fulfillmentMethod: FulfillmentMethod; fulfillmentStatus: OrderStatus; status: OrderStatus; providerName?: string
-  adminNotes: string[]; failureReason?: string; rejectionReason?: string; createdAt: string; updatedAt: string
+  fulfillmentMethod: FulfillmentMethod; fulfillmentStatus: OrderStatus; status: OrderStatus; providerName?: string; providerReference?: string
+  customerNote?: string; adminNotes: string[]; failureReason?: string; rejectionReason?: string; platform?: string; serviceId?: string; target?: string; targetType?: string; total?: number; createdAt: string; updatedAt: string
   startedAt?: string; completedAt?: string; timeline: OrderTimelineEvent[]
 }
 
@@ -30,6 +31,26 @@ export const orderStatusLabels: Record<OrderStatus, string> = { pending_review: 
 export const fulfillmentLabels: Record<FulfillmentMethod, string> = { manual: 'تنفيذ يدوي', automatic: 'تنفيذ تلقائي' }
 export const getOrders = () => orders
 export const getOrderById = (id: string) => orders.find(order => order.id === id)
+export const getOrdersByCustomerId = (customerId: string) => orders.filter(order => order.customerId === customerId)
+export const createOrder = (input: Omit<Order, 'id' | 'createdAt' | 'updatedAt' | 'timeline'> & Partial<Pick<Order, 'id' | 'createdAt' | 'updatedAt' | 'timeline'>>) => {
+  const now = input.createdAt ?? new Date().toISOString()
+  const order: Order = {
+    ...input,
+    id: input.id ?? `SENO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+    publicOrderNumber: input.publicOrderNumber ?? input.id,
+    createdAt: now,
+    updatedAt: input.updatedAt ?? now,
+    timeline: input.timeline ?? [event(`${input.id ?? 'order'}-created`, 'تم إنشاء الطلب', now)],
+  }
+  orders.unshift(order)
+  return order
+}
+export const updateOrder = (id: string, patch: Partial<Pick<Order, 'status' | 'fulfillmentStatus' | 'paymentStatus' | 'customerNote' | 'providerReference' | 'failureReason' | 'rejectionReason'>>) => {
+  const order = getOrderById(id)
+  if (!order) return undefined
+  Object.assign(order, patch, { updatedAt: new Date().toISOString() })
+  return order
+}
 export const getOrdersByStatus = (status: OrderStatus) => orders.filter(order => order.status === status)
 export const getOrderCounts = () => Object.fromEntries((Object.keys(orderStatusLabels) as OrderStatus[]).map(status => [status, getOrdersByStatus(status).length])) as Record<OrderStatus, number>
 const allowed: Record<OrderStatus, OrderStatus[]> = { pending_review: ['processing', 'rejected', 'cancelled'], processing: ['completed', 'failed', 'cancelled'], completed: ['refunded'], rejected: [], failed: ['processing'], cancelled: [], refunded: [] }

@@ -1,4 +1,5 @@
 import { getProductById, getGameById, getProductPackages, getSocialMediaServiceById } from '@/lib/data'
+import { createOrder as createStoredOrder } from '@/lib/data/orders'
 import type { CreateOrderInput, OrderPricing } from './types'
 import { OrderInputError } from './types'
 export { OrderInputError } from './types'
@@ -38,5 +39,19 @@ export function resolveOrderPricing(input: CreateOrderInput): OrderPricing {
 
 export function createOrder(input: CreateOrderInput) {
   const pricing = resolveOrderPricing(input)
-  return { id: `SNO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`, ...input, ...pricing, status: 'pending' as const, createdAt: new Date().toISOString() }
+  const product = input.productId ? getProductById(input.productId) : undefined
+  const game = input.gameId ? getGameById(input.gameId) : undefined
+  const packageName = input.packageId
+    ? game?.packages.find((item) => item.id === input.packageId)?.id ?? (product ? getProductPackages(product.slug).find((item) => item.id === input.packageId)?.id : undefined)
+    : undefined
+  return createStoredOrder({
+    customerId: 'demo-user', customerName: 'أحمد محمد', customerEmail: 'ahmed@seno-store.com', customerPhone: '+20 10 1234 5678',
+    source: input.serviceId ? 'social_media' : input.gameId ? 'game' : input.senoCode ? 'seno_code' : 'catalog',
+    productId: input.productId ?? input.gameId ?? input.serviceId ?? 'unknown', productName: product?.name ?? game?.name ?? input.serviceId ?? 'طلب خدمة',
+    productType: product?.productType ?? 'خدمة رقمية', category: product?.category ?? 'الخدمات', packageId: input.packageId, packageName,
+    quantity: pricing.quantity, originalPrice: pricing.subtotal, unitPrice: pricing.unitPrice, subtotal: pricing.subtotal, discount: 0, finalPrice: pricing.total, currency: pricing.currency,
+    paymentMethod: 'غير محدد', paymentStatus: 'pending', transactionId: '', customerInputs: Object.entries(input.accountData ?? {}).map(([key, value]) => ({ key, label: key, value })),
+    fulfillmentMethod: 'manual', fulfillmentStatus: 'pending_review', status: 'pending_review', adminNotes: [],
+    platform: input.platform, serviceId: input.serviceId, target: input.target, targetType: input.targetType, total: pricing.total,
+  })
 }
