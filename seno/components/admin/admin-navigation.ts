@@ -70,11 +70,11 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'قوالب الإشعارات', href: '/admin/notification-templates', icon: ScrollText, disabled: true },
   ] },
   { label: 'التقارير', items: [
-    { label: 'المبيعات', href: '/admin/reports/sales', icon: FileBarChart, disabled: true },
-    { label: 'الطلبات', href: '/admin/reports/orders', icon: ClipboardList, disabled: true },
-    { label: 'المنتجات', href: '/admin/reports/products', icon: Package, disabled: true },
-    { label: 'العملاء', href: '/admin/reports/customers', icon: Users, disabled: true },
-    { label: 'الأرباح', href: '/admin/reports/profit', icon: CircleDollarSign, disabled: true },
+    { label: 'المبيعات', href: '/admin/reports/sales', icon: FileBarChart },
+    { label: 'الطلبات', href: '/admin/reports/orders', icon: ClipboardList },
+    { label: 'المنتجات', href: '/admin/reports/products', icon: Package },
+    { label: 'العملاء', href: '/admin/reports/customers', icon: Users },
+    { label: 'الأرباح', href: '/admin/reports/profits', icon: CircleDollarSign },
   ] },
   { label: 'الإدارة', items: [
     { label: 'المستخدمون الإداريون', href: '/admin/admin-users', icon: UserRound, disabled: true },
