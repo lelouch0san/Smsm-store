@@ -10,7 +10,7 @@ import { adminNavigation, adminNotifications, adminProfile, type AdminNavGroup, 
 
 export function AdminNavItem({ item, collapsed, onNavigate }: { item: AdminNavItem; collapsed: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
-  const active = pathname === item.href
+  const active = pathname === item.href || (item.href === '/admin/orders/providers' && pathname.startsWith('/admin/orders/providers/'))
   const Icon = item.icon
   const content = <><Icon className="size-[17px] shrink-0" aria-hidden="true" /><span className={cn('truncate transition-opacity', collapsed && 'lg:w-0 lg:opacity-0')}>{item.label}</span>{item.disabled && !collapsed && <span className="mr-auto rounded-full border border-white/10 px-1.5 py-0.5 text-[9px] text-white/35">قريباً</span>}</>
   if (item.disabled) return <button type="button" onClick={() => toast.info('سيتم تفعيل هذه الصفحة في مرحلة لاحقة.')} className={cn('group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-right text-[12px] text-white/45 transition hover:bg-white/[.04] hover:text-white/70', collapsed && 'lg:justify-center lg:px-0')} title={collapsed ? item.label : undefined}>{content}</button>
@@ -19,7 +19,7 @@ export function AdminNavItem({ item, collapsed, onNavigate }: { item: AdminNavIt
 
 export function AdminNavGroup({ group, collapsed, onNavigate }: { group: AdminNavGroup; collapsed: boolean; onNavigate?: () => void }) {
   const pathname = usePathname()
-  const hasActive = group.items.some(item => pathname === item.href)
+  const hasActive = group.items.some(item => pathname === item.href || (item.href === '/admin/orders/providers' && pathname.startsWith('/admin/orders/providers/')))
   const [open, setOpen] = useState(hasActive || group.label === 'الرئيسية')
   return <div className="flex flex-col gap-1"><button type="button" onClick={() => setOpen(value => !value)} className={cn('flex items-center justify-between px-3 pb-1 pt-3 text-[10px] font-bold tracking-wide text-white/30', collapsed && 'lg:justify-center lg:px-0')}><span className={cn(collapsed && 'lg:hidden')}>{group.label}</span><ChevronDown className={cn('size-3 transition-transform', !open && '-rotate-90', collapsed && 'lg:hidden')} aria-hidden="true" /></button>{open && <div className="flex flex-col gap-0.5">{group.items.map(item => <AdminNavItem key={item.href} item={item} collapsed={collapsed} onNavigate={onNavigate} />)}</div>}</div>
 }

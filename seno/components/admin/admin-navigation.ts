@@ -2,7 +2,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Activity as ActivityIcon, Bell, Boxes, BriefcaseBusiness, CircleDollarSign, ClipboardList, Coins, CreditCard, FileBarChart,
   FileCog, Gauge, Gift, LayoutDashboard, Megaphone, Package, PanelsTopLeft, ScrollText, Settings2,
-  ShieldCheck, ShoppingBag, Tags, Ticket, UserRound, Users, WalletCards, Banknote, BadgeDollarSign, RotateCcw,
+  ShieldCheck, ShoppingBag, Tags, Ticket, UserRound, Users, WalletCards, Banknote, BadgeDollarSign, RotateCcw, Plug,
 } from 'lucide-react'
 
 export type AdminNavItem = { label: string; href: string; icon: LucideIcon; disabled?: boolean }
@@ -34,7 +34,7 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'الملغاة', href: '/admin/orders/cancelled', icon: FileCog },
     { label: 'المستردة', href: '/admin/orders/refunded', icon: RotateCcw },
     { label: 'طابور التنفيذ', href: '/admin/orders/queue', icon: Gauge },
-    { label: 'مزودو الخدمات والتكاملات', href: '/admin/orders/providers', icon: BriefcaseBusiness },
+    { label: 'مزودو الخدمات', href: '/admin/orders/providers', icon: Plug },
     { label: 'قواعد التنفيذ والحالات', href: '/admin/orders/rules', icon: FileCog },
   ] },
   { label: 'العملاء', items: [
