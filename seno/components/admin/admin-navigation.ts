@@ -82,14 +82,14 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'سجل العمليات', href: '/admin/audit-logs', icon: ScrollText },
   ] },
   { label: 'الإعدادات', items: [
-    { label: 'إعدادات المتجر', href: '/admin/settings/store', icon: Settings2, disabled: true },
-    { label: 'إعدادات الطلبات', href: '/admin/settings/orders', icon: ClipboardList, disabled: true },
-    { label: 'إعدادات الدفع', href: '/admin/settings/payments', icon: CreditCard, disabled: true },
-    { label: 'إعدادات المحفظة', href: '/admin/settings/wallet', icon: WalletCards, disabled: true },
-    { label: 'إعدادات السحب', href: '/admin/settings/withdrawals', icon: Banknote, disabled: true },
-    { label: 'الإشعارات', href: '/admin/settings/notifications', icon: Bell, disabled: true },
-    { label: 'الأمان', href: '/admin/settings/security', icon: ShieldCheck, disabled: true },
-    { label: 'التكاملات', href: '/admin/settings/integrations', icon: Settings2, disabled: true },
+    { label: 'إعدادات المتجر', href: '/admin/settings/store', icon: Settings2 },
+    { label: 'إعدادات الطلبات', href: '/admin/settings/orders', icon: ClipboardList },
+    { label: 'إعدادات الدفع', href: '/admin/settings/payments', icon: CreditCard },
+    { label: 'إعدادات المحفظة', href: '/admin/settings/wallet', icon: WalletCards },
+    { label: 'إعدادات السحب', href: '/admin/settings/withdrawals', icon: Banknote },
+    { label: 'الإشعارات', href: '/admin/settings/notifications', icon: Bell },
+    { label: 'الأمان', href: '/admin/settings/security', icon: ShieldCheck },
+    { label: 'التكاملات', href: '/admin/settings/integrations', icon: Settings2 },
   ] },
 ]
 
