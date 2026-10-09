@@ -2,23 +2,31 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { demoUser } from '@/lib/data'
+import { DEMO_CUSTOMER_ID, debitWallet, getWalletBalance, getWalletByCustomerId, creditWallet } from '@/lib/data/wallet-finance'
 import type { Profile } from '@/lib/mock-profile'
 
-type FrontendAuth = { user: Profile | null; isAuthenticated: boolean; balance: number; setBalance: (balance: number) => void; signIn: () => void; signOut: () => void }
+type FrontendAuth = { user: Profile | null; customerId: string; isAuthenticated: boolean; balance: number; setBalance: (balance: number) => void; signIn: () => void; signOut: () => void }
 const AuthContext = createContext<FrontendAuth | null>(null)
 
 export function FrontendAuthProvider({ children }: { children: React.ReactNode }) {
   const [authenticated, setAuthenticated] = useState(true)
-  const [balance, setBalanceState] = useState(demoUser.balance)
+  const customerId = DEMO_CUSTOMER_ID
+  const [balance, setBalanceState] = useState(() => getWalletBalance(customerId))
   useEffect(() => {
     const savedAuth = window.localStorage.getItem('seno-auth')
-    const savedBalance = window.localStorage.getItem('seno-balance')
     if (savedAuth === 'guest') setAuthenticated(false)
-    if (savedBalance) setBalanceState(Number(savedBalance))
+    setBalanceState(getWalletBalance(customerId))
   }, [])
-  const setBalance = (nextBalance: number) => { setBalanceState(nextBalance); window.localStorage.setItem('seno-balance', String(nextBalance)) }
-  const user = authenticated ? { ...demoUser, balance } : null
-  const value = useMemo(() => ({ user, isAuthenticated: authenticated, balance, setBalance, signIn: () => { setAuthenticated(true); window.localStorage.setItem('seno-auth', 'authenticated') }, signOut: () => { setAuthenticated(false); window.localStorage.setItem('seno-auth', 'guest') } }), [authenticated, balance, user])
+  const setBalance = (nextBalance: number) => {
+    const currentBalance = getWalletBalance(customerId)
+    const delta = nextBalance - currentBalance
+    if (delta > 0) creditWallet(customerId, delta, 'تحديث رصيد تجريبي', 'النظام')
+    if (delta < 0) debitWallet(customerId, Math.abs(delta), 'تحديث رصيد تجريبي', 'النظام')
+    setBalanceState(getWalletBalance(customerId))
+  }
+  const wallet = getWalletByCustomerId(customerId)
+  const user = authenticated ? { ...demoUser, id: customerId, balance, name: wallet?.customerName ?? demoUser.name } : null
+  const value = useMemo(() => ({ user, customerId, isAuthenticated: authenticated, balance, setBalance, signIn: () => { setAuthenticated(true); window.localStorage.setItem('seno-auth', 'authenticated') }, signOut: () => { setAuthenticated(false); window.localStorage.setItem('seno-auth', 'guest') } }), [authenticated, balance, user, customerId])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

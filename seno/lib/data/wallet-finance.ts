@@ -55,12 +55,25 @@ let redemptions: SenoCodeRedemption[] = [
 ]
 
 export const labels = { transaction:{deposit:'إيداع',order_payment:'دفع طلب',admin_credit:'إضافة إدارية',admin_debit:'خصم إداري',refund:'استرداد',code_redemption:'استرداد كود'}, deposit:{pending:'بانتظار المراجعة',approved:'مقبول',rejected:'مرفوض',cancelled:'ملغي'}, code:{available:'متاح',sold:'مباع',redeemed:'مستخدم',expired:'منتهي',blocked:'محظور'} }
-export const getWallets = () => wallets
+export const WALLET_CURRENCY = 'EGP' as const
+export const DEMO_CUSTOMER_ID = 'CUS-012' as const
+
+export const getWallets = () => wallets.map(wallet => ({ ...wallet, currency: WALLET_CURRENCY, isMock: true as const }))
 export const getWalletByCustomerId = (id:string) => wallets.find(w=>w.customerId===id)
+export const getWalletBalance = (customerId:string) => getWalletByCustomerId(customerId)?.balance ?? 0
 export const getWalletTransactions = (customerId?:string) => customerId ? transactions.filter(t=>t.customerId===customerId) : transactions
 export const getWalletTransactionById = (id:string) => transactions.find(t=>t.id===id)
 export const getTransactionsByType = (type:TransactionType) => transactions.filter(t=>t.type===type)
-export const getDepositRequests = () => deposits
+export const getDepositRequests = (customerId?:string) => customerId ? deposits.filter(d=>d.customerId===customerId) : deposits
+export const getDepositRequestsByCustomerId = (customerId:string) => getDepositRequests(customerId)
+export const createMockDepositRequest = (input:Pick<DepositRequest,'customerId'|'customerName'|'amount'|'paymentMethod'|'reference'> & Partial<Pick<DepositRequest,'proof'|'note'>>) => {
+  if (!Number.isFinite(input.amount) || input.amount <= 0) return { ok:false as const, reason:'invalid_amount' as const }
+  const wallet = getWalletByCustomerId(input.customerId)
+  if (!wallet || wallet.status !== 'active') return { ok:false as const, reason:'wallet_unavailable' as const }
+  const deposit:DepositRequest = { ...input, id:nextId('DEP'), status:'pending', createdAt:stamp(0) }
+  deposits.unshift(deposit)
+  return { ok:true as const, deposit }
+}
 export const getDepositRequestById = (id:string) => deposits.find(d=>d.id===id)
 export const getSenoCodes = () => codes
 export const getSenoCodeById = (id:string) => codes.find(c=>c.id===id)
