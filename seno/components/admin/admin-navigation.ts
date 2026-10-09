@@ -34,7 +34,7 @@ export const adminNavigation: AdminNavGroup[] = [
     { label: 'الملغاة', href: '/admin/orders/cancelled', icon: FileCog },
     { label: 'المستردة', href: '/admin/orders/refunded', icon: RotateCcw },
     { label: 'طابور التنفيذ', href: '/admin/orders/queue', icon: Gauge },
-    { label: 'مزودو التنفيذ', href: '/admin/orders/providers', icon: BriefcaseBusiness },
+    { label: 'مزودو الخدمات والتكاملات', href: '/admin/orders/providers', icon: BriefcaseBusiness },
     { label: 'قواعد التنفيذ والحالات', href: '/admin/orders/rules', icon: FileCog },
   ] },
   { label: 'العملاء', items: [

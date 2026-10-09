@@ -1,2 +1,2 @@
-import { FulfillmentProviders } from '@/components/admin/orders/fulfillment-pages'
-export default function ProvidersPage() { return <FulfillmentProviders /> }
+import { ServiceProvidersManagement } from '@/components/admin/service-providers/service-providers-management'
+export default function ProvidersPage() { return <ServiceProvidersManagement /> }
