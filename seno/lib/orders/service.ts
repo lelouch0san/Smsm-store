@@ -51,7 +51,7 @@ export function createOrder(input: CreateOrderInput) {
     productType: product?.productType ?? 'خدمة رقمية', category: product?.category ?? 'الخدمات', packageId: input.packageId, packageName,
     quantity: pricing.quantity, originalPrice: pricing.subtotal, unitPrice: pricing.unitPrice, subtotal: pricing.subtotal, discount: 0, finalPrice: pricing.total, currency: pricing.currency,
     paymentMethod: 'غير محدد', paymentStatus: 'pending', transactionId: '', customerInputs: Object.entries(input.accountData ?? {}).map(([key, value]) => ({ key, label: key, value })),
-    fulfillmentMethod: 'manual', fulfillmentStatus: 'pending_review', status: 'pending_review', adminNotes: [],
+    fulfillmentMethod: 'manual', fulfillmentStatus: 'manual_review', status: 'pending_review', adminNotes: [],
     platform: input.platform, serviceId: input.serviceId, target: input.target, targetType: input.targetType, total: pricing.total,
   })
 }
