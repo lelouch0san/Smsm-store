@@ -5,10 +5,13 @@ import type { SenoBalanceCodeProduct } from '@/lib/seno-balance-codes'
 
 export type CategoryType = 'store' | 'account' | 'service'
 export type CategoryPurpose = 'general' | 'offers' | 'custom'
+export type ProductAvailability = 'active' | 'inactive' | 'draft' | 'archived'
 
 export type Category = { id: string; name: string; nameEn?: string; slug: string; type: CategoryType; purpose?: CategoryPurpose; description?: string; order: number; active: boolean; image?: string; metadata?: Record<string, unknown> }
-export type Product = StoreProduct
+export type Product = StoreProduct & { id: string; categoryId: string; productTypeId?: string; displayOrder: number; availability: ProductAvailability }
+export type ProductType = import('./product-types').ProductType
 export type ProductPackage = DigitalCardPackage | GamePackage
+export type Package = ProductPackage
 export type { DigitalCardPackage, StoreProduct, Game, GamePackage, GameField, GameOrder, VoiceChatProduct, ProductField, SenoBalanceCodeProduct }
 export type Service = VoiceChatProduct
 export type SocialMediaService = { id: string; platform: string; name: string; inputType: 'profile_url' | 'post_url' | 'video_url' | 'username'; inputLabel: string; quantityRequired: boolean; minimumQuantity: number; maximumQuantity: number; quantityStep: number; pricePerUnit: number; currency: string; active: boolean; available: boolean; image?: string; instructions?: string[]; metadata?: Record<string, unknown> }
